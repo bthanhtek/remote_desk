@@ -31,26 +31,10 @@ public class AuthClient implements Runnable {
 	
 	@Override
 	public void run() {
-
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 		Screen screen = new Screen(socket);
 		screen.run();
 		screen.setVisible(true);
-//		try {
-
-//			dataInputStream = new DataInputStream(socket.getInputStream());
-//			dataOutputStream = new DataOutputStream(socket.getOutputStream());
-//
-//			dataOutputStream.writeUTF(password);
-//
-//			String checkPass = dataInputStream.readUTF();			
-//			
-//
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 
 	}
 

@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -20,6 +22,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.IllegalFormatWidthException;
 import java.util.Scanner;
@@ -30,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -41,6 +45,7 @@ import javax.swing.border.LineBorder;
 
 import Widgets.CButton;
 import client.EnumCommands;
+import utils.InfoFile;
 
 public class MsgServer extends JFrame {
 	private JTextArea jTextArea;
@@ -56,6 +61,8 @@ public class MsgServer extends JFrame {
 	private JScrollPane scrollPane;
 	private JFileChooser fc;
 	private File file;
+	public ArrayList<InfoFile> listFile = new ArrayList<InfoFile>();
+	public int index;
 
 	public MsgServer() {
 		// TODO Auto-generated constructor stub
@@ -223,9 +230,12 @@ public class MsgServer extends JFrame {
 			case 0: {
 				String msg = reviceMess.readUTF();
 				JPanel panel = formatLabel(msg);
-
 				JPanel left = new JPanel(new BorderLayout());
+
 				left.add(panel, BorderLayout.LINE_START);
+
+				panel.addMouseListener(getEvent(msg));
+
 				vertical.add(left);
 
 				validate();
@@ -306,17 +316,10 @@ public class MsgServer extends JFrame {
 
 					byte[] fileContent = new byte[fileContentLength];
 
+					listFile.add(new InfoFile(index++, nameString, fileContent));
+
 					reviceMess.readFully(fileContent, 0, fileContentLength);
 
-					String home = System.getProperty("user.home");
-
-					File fileDownFile = new File(home + "/Downloads/" + nameString);
-
-					FileOutputStream fileOutputStream = new FileOutputStream(fileDownFile);
-
-					fileOutputStream.write(fileContent);
-
-					fileOutputStream.close();
 				}
 
 			}
@@ -325,6 +328,83 @@ public class MsgServer extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+	}
+
+	public void dowloadFile(String nameString, byte[] fileContent, File save) {
+		try {
+
+			File fileDowloadFile = new File(save.getAbsolutePath() + "/" + nameString);
+			FileOutputStream fileOutputStream = new FileOutputStream(fileDowloadFile);
+
+			fileOutputStream.write(fileContent);
+
+			fileOutputStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public MouseListener getEvent(String sms) {
+		return new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				for (InfoFile infoFile : listFile) {
+					if (sms.equals(infoFile.nameFileString)) {
+						int reply = JOptionPane.showConfirmDialog(null,
+								"Bạn có muốn tải file : " + infoFile.nameFileString + " không?", "Download",
+								JOptionPane.YES_NO_OPTION);
+						if (reply == JOptionPane.YES_OPTION) {
+							JFileChooser chooser = new JFileChooser();
+							chooser.setCurrentDirectory(new java.io.File("."));
+							chooser.setDialogTitle("Select folder");
+							chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+							chooser.setAcceptAllFileFilterUsed(false);
+
+							if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+								System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+								System.out
+										.println("InfoFile : " + infoFile.idFileString + "-" + infoFile.nameFileString);
+								System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
+								dowloadFile(infoFile.nameFileString, infoFile.data, chooser.getSelectedFile());
+							}
+						} else {
+							System.out.println("Out");
+
+						}
+
+					}
+				}
+			}
+		};
 
 	}
 

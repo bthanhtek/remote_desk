@@ -114,7 +114,7 @@ public class UIStart extends JFrame {
 		CButton button = new CButton();
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Connect(ip.getText(), password.getText());
+				Connect(ip.getText());
 
 			}
 		});
@@ -172,16 +172,19 @@ public class UIStart extends JFrame {
 		springLayout.putConstraint(SpringLayout.NORTH, picLabel, 10, SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, picLabel, 10, SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.EAST, picLabel, -10, SpringLayout.EAST, getContentPane());
-
+		
 	}
 		
-	public void Connect(String ip, String password) {
-
+	public void Connect(String ip) {
 		Socket socket;
 		try {
+			
 			socket = new Socket(ip, PORT);
 			System.out.println("connecting");
-			AuthClient auth = new AuthClient(socket, password, ip);
+			Screen screen = new Screen(socket);
+			screen.run();
+			screen.setVisible(true);
+			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -192,6 +195,7 @@ public class UIStart extends JFrame {
 
 	}
 
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 //		new UIStart();

@@ -51,10 +51,10 @@ public class UIStart extends JFrame {
 	
 	UIStart() {
 		
-		AuthServer(PORT);	
+		ListenConnection(PORT);	
 	}	
 	
-	public void AuthServer(int PORT) {
+	public void ListenConnection(int PORT) {
 		
 		try {
 			ServerSocket serverSocket = new ServerSocket(PORT);			
@@ -71,6 +71,8 @@ public class UIStart extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	
 	
 	public void drawGUI() {
 		setResizable(false);
